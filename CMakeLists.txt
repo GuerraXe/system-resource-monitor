@@ -13,7 +13,11 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 if (MSVC)
-    add_compile_options(/W4 /permissive- /Zc:__cplusplus /EHsc)
+    # /wd4127 silences "conditional expression is constant": the CHECK()
+    # macros in tests/support/test_framework.hpp use the standard
+    # do { ... } while (0) idiom, which MSVC flags even though it is the
+    # canonical, portable way to write a multi-statement macro.
+    add_compile_options(/W4 /permissive- /Zc:__cplusplus /EHsc /wd4127)
 else()
     add_compile_options(-Wall -Wextra -Wpedantic)
 endif()
