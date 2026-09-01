@@ -48,4 +48,15 @@ public:
     virtual core::Result<core::CpuSnapshot> sample() = 0;
 };
 
+// Interval-based like ICpuMonitor: a process's cpu_percent needs a previous
+// reading to diff against. Unlike ICpuMonitor, no separate baseline call is
+// needed -- a process absent from the previous sample (new since then, or
+// this is the very first call) simply reports 0% CPU, since "no data yet"
+// and "genuinely idle" aren't distinguishable from a single reading anyway.
+class IProcessMonitor {
+public:
+    virtual ~IProcessMonitor() = default;
+    virtual core::Result<std::vector<core::ProcessInfo>> sample() = 0;
+};
+
 } // namespace srm::platform

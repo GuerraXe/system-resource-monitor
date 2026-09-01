@@ -27,4 +27,19 @@ double rate_per_second(std::uint64_t previous, std::uint64_t current, double ela
 double cpu_percent_from_ticks(std::uint64_t prev_idle, std::uint64_t prev_total,
                                std::uint64_t curr_idle, std::uint64_t curr_total) noexcept;
 
+// Per-process CPU utilization: what percentage of one logical CPU's worth
+// of time this process consumed during the interval, given its cumulative
+// CPU-time tick counter at the start and end and the wall-clock seconds
+// elapsed between those readings. `ticks_per_second` is the counter's own
+// rate (e.g. 10,000,000 for Windows FILETIME's 100ns units, or a Linux
+// backend's USER_HZ for /proc jiffies) -- kept as a parameter rather than
+// hardcoded so this is reusable across backends.
+//
+// Deliberately NOT clamped to 100: a process with multiple threads spread
+// across multiple cores can legitimately consume more than one core's worth
+// of time per second, matching the classic top/Task-Manager convention
+// (pre per-core normalization) rather than hiding that over-100% signal.
+double cpu_percent_of_wall_time(std::uint64_t previous_ticks, std::uint64_t current_ticks,
+                                 double elapsed_seconds, double ticks_per_second) noexcept;
+
 } // namespace srm::core::math

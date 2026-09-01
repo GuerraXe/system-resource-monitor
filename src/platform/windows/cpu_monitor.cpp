@@ -3,6 +3,7 @@
 #include <string>
 
 #include "core/math.hpp"
+#include "win_filetime.hpp"
 
 #define WIN32_LEAN_AND_MEAN
 #define NOMINMAX
@@ -12,10 +13,6 @@ namespace srm::platform::windows {
 
 namespace {
 
-std::uint64_t to_ticks(const FILETIME& ft) {
-    return (static_cast<std::uint64_t>(ft.dwHighDateTime) << 32) | ft.dwLowDateTime;
-}
-
 RawCpuTimes read_raw_cpu_times() {
     RawCpuTimes raw;
     FILETIME idle{};
@@ -23,9 +20,10 @@ RawCpuTimes read_raw_cpu_times() {
     FILETIME user{};
     if (GetSystemTimes(&idle, &kernel, &user)) {
         raw.succeeded = true;
-        raw.idle_ticks = to_ticks(idle);
+        raw.idle_ticks = filetime_to_ticks(idle.dwLowDateTime, idle.dwHighDateTime);
         // Windows reports kernel time inclusive of idle time.
-        raw.total_ticks = to_ticks(kernel) + to_ticks(user);
+        raw.total_ticks = filetime_to_ticks(kernel.dwLowDateTime, kernel.dwHighDateTime) +
+                           filetime_to_ticks(user.dwLowDateTime, user.dwHighDateTime);
     } else {
         raw.succeeded = false;
         raw.last_error = static_cast<std::uint32_t>(GetLastError());

@@ -62,3 +62,26 @@ TEST_CASE("cpu_percent_from_ticks: idle delta exceeding total delta clamps to 0%
     // producing a negative "busy" figure.
     CHECK(cpu_percent_from_ticks(0, 1000, 2000, 1100) == 0.0);
 }
+
+TEST_CASE("cpu_percent_of_wall_time: one full core-second of CPU time in one wall second is 100%") {
+    // 10,000,000 ticks == 1 second at Windows FILETIME's 100ns resolution.
+    CHECK(cpu_percent_of_wall_time(0, 10'000'000, 1.0, 10'000'000.0) == 100.0);
+}
+
+TEST_CASE("cpu_percent_of_wall_time: multi-threaded process can exceed 100% (not clamped)") {
+    // Two full core-seconds of CPU time consumed in one wall second implies
+    // the process used two cores simultaneously -- 200%, not clamped away.
+    CHECK(cpu_percent_of_wall_time(0, 20'000'000, 1.0, 10'000'000.0) == 200.0);
+}
+
+TEST_CASE("cpu_percent_of_wall_time: no CPU time consumed is 0%") {
+    CHECK(cpu_percent_of_wall_time(1000, 1000, 1.0, 10'000'000.0) == 0.0);
+}
+
+TEST_CASE("cpu_percent_of_wall_time: zero elapsed wall time yields zero, not a divide-by-zero") {
+    CHECK(cpu_percent_of_wall_time(0, 10'000'000, 0.0, 10'000'000.0) == 0.0);
+}
+
+TEST_CASE("cpu_percent_of_wall_time: counter reset (current < previous) yields zero") {
+    CHECK(cpu_percent_of_wall_time(10'000'000, 0, 1.0, 10'000'000.0) == 0.0);
+}

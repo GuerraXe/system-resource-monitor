@@ -6,10 +6,14 @@ target_link_libraries(srm_platform PUBLIC srm_core)
 if (WIN32)
     target_sources(srm_platform PRIVATE
         windows/win_string.cpp
+        windows/win_filetime.cpp
         windows/memory_monitor.cpp
         windows/disk_monitor.cpp
         windows/cpu_monitor.cpp
+        windows/process_monitor.cpp
     )
+    # GetProcessMemoryInfo (psapi.h)
+    target_link_libraries(srm_platform PRIVATE Psapi)
 else()
     # No sources added: fail the configure step loudly instead of silently
     # producing a binary with no working monitor backend. Adding support

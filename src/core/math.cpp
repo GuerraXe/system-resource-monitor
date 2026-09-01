@@ -34,4 +34,13 @@ double cpu_percent_from_ticks(std::uint64_t prev_idle, std::uint64_t prev_total,
     return std::clamp(percent, 0.0, 100.0);
 }
 
+double cpu_percent_of_wall_time(std::uint64_t previous_ticks, std::uint64_t current_ticks,
+                                 double elapsed_seconds, double ticks_per_second) noexcept {
+    if (elapsed_seconds <= 0.0 || ticks_per_second <= 0.0 || current_ticks < previous_ticks) {
+        return 0.0;
+    }
+    const double cpu_seconds = static_cast<double>(current_ticks - previous_ticks) / ticks_per_second;
+    return 100.0 * cpu_seconds / elapsed_seconds;
+}
+
 } // namespace srm::core::math
