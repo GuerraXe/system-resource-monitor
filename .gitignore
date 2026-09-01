@@ -1,0 +1,24 @@
+# Build output
+build/
+out/
+
+# CMake
+CMakeUserPresets.json
+CMakeCache.txt
+CMakeFiles/
+compile_commands.json
+
+# Visual Studio / MSVC
+.vs/
+*.obj
+*.pdb
+*.ilk
+*.exe
+*.exp
+*.lib
+*.log
+
+# VS Code local settings
+.vscode/*
+!.vscode/settings.json
+!.vscode/c_cpp_properties.json
