@@ -77,6 +77,30 @@ automatically.
 
 Continuous mode redraws in place and exits cleanly on Ctrl+C.
 
+## Where do I see the results?
+
+The output prints as plain text in whatever terminal window you ran the
+command from -- there's no separate window, log file, or report to go
+looking for. Concretely:
+
+1. Open a terminal: **PowerShell**, **Command Prompt**, or the built-in
+   terminal in VS Code (`` Ctrl+` ``).
+2. Type the `cd` command to get into the project folder, then one of the
+   `srm.exe ...` commands shown above, and press Enter.
+3. The report appears immediately below, in that same window (see the
+   example below).
+
+If you instead **double-click `srm.exe` in File Explorer**, a window will
+flash open and close instantly -- that's expected, not a bug: the program
+finished running before you could read it, and closed with the window.
+Always launch it from a terminal so the output stays visible (or use
+continuous mode, which keeps redrawing until you press Ctrl+C).
+
+If you're running it through VS Code's debugger (F5), the output goes to a
+separate console window that pops up outside the editor, not the VS Code
+Debug Console panel -- that's intentional, since the live-refresh display
+needs a real terminal.
+
 ### Example output (`--once --top 3`)
 
 ```
