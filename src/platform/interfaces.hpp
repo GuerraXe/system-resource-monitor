@@ -59,4 +59,14 @@ public:
     virtual core::Result<std::vector<core::ProcessInfo>> sample() = 0;
 };
 
+// Interval-based like IProcessMonitor: throughput needs a previous
+// cumulative-byte-counter reading to diff against, and an interface with no
+// prior reading (new since last sample, or this is the first call) simply
+// reports 0 bytes/sec rather than needing a warm-up call or an error path.
+class INetworkMonitor {
+public:
+    virtual ~INetworkMonitor() = default;
+    virtual core::Result<std::vector<core::NetworkInterfaceInfo>> sample() = 0;
+};
+
 } // namespace srm::platform

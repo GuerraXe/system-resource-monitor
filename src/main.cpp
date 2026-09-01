@@ -7,6 +7,7 @@
 #include "platform/windows/cpu_monitor.hpp"
 #include "platform/windows/disk_monitor.hpp"
 #include "platform/windows/memory_monitor.hpp"
+#include "platform/windows/network_monitor.hpp"
 #include "platform/windows/process_monitor.hpp"
 
 // Placeholder entry point wired directly to individual monitors as an
@@ -63,6 +64,22 @@ int main() {
         }
     } else {
         std::cout << "Process metrics unavailable: " << proc_result.error().message << "\n";
+    }
+
+    srm::platform::windows::NetworkMonitor network_monitor;
+    network_monitor.sample(); // throwaway: populates the previous-bytes baseline
+    std::this_thread::sleep_for(std::chrono::milliseconds(200));
+    const auto net_result = network_monitor.sample();
+    if (net_result) {
+        for (const auto& iface : net_result.value()) {
+            std::cout << iface.name << ": "
+                      << srm::core::format::bytes(static_cast<std::uint64_t>(iface.receive_bytes_per_second))
+                      << "/s down, "
+                      << srm::core::format::bytes(static_cast<std::uint64_t>(iface.send_bytes_per_second))
+                      << "/s up\n";
+        }
+    } else {
+        std::cout << "Network metrics unavailable: " << net_result.error().message << "\n";
     }
 
     return 0;

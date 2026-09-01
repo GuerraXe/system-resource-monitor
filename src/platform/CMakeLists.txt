@@ -11,9 +11,10 @@ if (WIN32)
         windows/disk_monitor.cpp
         windows/cpu_monitor.cpp
         windows/process_monitor.cpp
+        windows/network_monitor.cpp
     )
-    # GetProcessMemoryInfo (psapi.h)
-    target_link_libraries(srm_platform PRIVATE Psapi)
+    # GetProcessMemoryInfo (psapi.h); GetIfTable2/FreeMibTable (iphlpapi.h)
+    target_link_libraries(srm_platform PRIVATE Psapi Iphlpapi)
 else()
     # No sources added: fail the configure step loudly instead of silently
     # producing a binary with no working monitor backend. Adding support
