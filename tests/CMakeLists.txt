@@ -18,6 +18,8 @@ add_executable(srm_tests
     platform/windows/process_monitor_integration_tests.cpp
     platform/windows/network_monitor_translate_tests.cpp
     platform/windows/network_monitor_integration_tests.cpp
+    platform/windows/system_monitor_translate_tests.cpp
+    platform/windows/system_monitor_integration_tests.cpp
 )
 target_compile_features(srm_tests PRIVATE cxx_std_20)
 target_include_directories(srm_tests PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})

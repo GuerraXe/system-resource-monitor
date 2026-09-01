@@ -12,6 +12,7 @@ if (WIN32)
         windows/cpu_monitor.cpp
         windows/process_monitor.cpp
         windows/network_monitor.cpp
+        windows/system_monitor.cpp
     )
     # GetProcessMemoryInfo (psapi.h); GetIfTable2/FreeMibTable (iphlpapi.h)
     target_link_libraries(srm_platform PRIVATE Psapi Iphlpapi)

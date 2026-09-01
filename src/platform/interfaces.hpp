@@ -69,4 +69,14 @@ public:
     virtual core::Result<std::vector<core::NetworkInterfaceInfo>> sample() = 0;
 };
 
+// Instantaneous, like IMemoryMonitor. Always succeeds in practice --
+// uptime has no failure mode on any supported OS -- so hostname lookup
+// failing (rare, theoretical) degrades to an empty hostname rather than
+// failing the whole sample.
+class ISystemMonitor {
+public:
+    virtual ~ISystemMonitor() = default;
+    virtual core::Result<core::SystemInfo> sample() = 0;
+};
+
 } // namespace srm::platform

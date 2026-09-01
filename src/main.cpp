@@ -9,11 +9,22 @@
 #include "platform/windows/memory_monitor.hpp"
 #include "platform/windows/network_monitor.hpp"
 #include "platform/windows/process_monitor.hpp"
+#include "platform/windows/system_monitor.hpp"
 
 // Placeholder entry point wired directly to individual monitors as an
 // end-to-end smoke check. Replaced by real CLI parsing, the monitor engine,
 // and the presentation layer in later milestones.
 int main() {
+    srm::platform::windows::SystemMonitor system_monitor;
+    const auto sys_result = system_monitor.sample();
+    if (sys_result) {
+        const auto& info = sys_result.value();
+        std::cout << info.hostname << " up "
+                  << srm::core::format::duration_seconds(static_cast<std::uint64_t>(info.uptime.count())) << "\n";
+    } else {
+        std::cout << "System metrics unavailable: " << sys_result.error().message << "\n";
+    }
+
     srm::platform::windows::CpuMonitor cpu_monitor; // takes its baseline reading now
     std::this_thread::sleep_for(std::chrono::milliseconds(200));
     const auto cpu_result = cpu_monitor.sample();
