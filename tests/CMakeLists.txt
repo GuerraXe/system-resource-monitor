@@ -5,8 +5,12 @@
 add_executable(srm_tests
     support/runner_main.cpp
     placeholder_test.cpp
+    core/math_tests.cpp
+    core/format_tests.cpp
+    core/result_tests.cpp
 )
 target_compile_features(srm_tests PRIVATE cxx_std_20)
 target_include_directories(srm_tests PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
+target_link_libraries(srm_tests PRIVATE srm_core)
 
 add_test(NAME srm_tests COMMAND srm_tests)
