@@ -18,7 +18,8 @@ compile_commands.json
 *.lib
 *.log
 
-# VS Code local settings
+# VS Code: share build/debug/IntelliSense config, ignore anything else local
 .vscode/*
-!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
 !.vscode/c_cpp_properties.json
