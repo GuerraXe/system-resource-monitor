@@ -5,7 +5,9 @@ target_link_libraries(srm_platform PUBLIC srm_core)
 
 if (WIN32)
     target_sources(srm_platform PRIVATE
+        windows/win_string.cpp
         windows/memory_monitor.cpp
+        windows/disk_monitor.cpp
     )
 else()
     # No sources added: fail the configure step loudly instead of silently

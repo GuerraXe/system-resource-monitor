@@ -8,6 +8,8 @@
 // concrete implementation has actually been written and tested, rather than
 // speculatively designed up front.
 
+#include <vector>
+
 #include "core/result.hpp"
 #include "core/snapshot.hpp"
 
@@ -20,6 +22,18 @@ class IMemoryMonitor {
 public:
     virtual ~IMemoryMonitor() = default;
     virtual core::Result<core::MemoryInfo> sample() = 0;
+};
+
+// The outer Result models enumeration itself failing (no OS-level way to
+// even list volumes). A volume that exists but can't be queried right now
+// (no media in a drive, a share that just disconnected, ...) is simply
+// omitted from the vector rather than failing the whole sample -- that
+// distinction is "not currently usable media," not an error worth
+// surfacing per volume.
+class IDiskMonitor {
+public:
+    virtual ~IDiskMonitor() = default;
+    virtual core::Result<std::vector<core::DiskVolumeInfo>> sample() = 0;
 };
 
 } // namespace srm::platform
