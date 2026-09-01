@@ -12,6 +12,8 @@ add_executable(srm_tests
     platform/windows/memory_monitor_integration_tests.cpp
     platform/windows/disk_monitor_translate_tests.cpp
     platform/windows/disk_monitor_integration_tests.cpp
+    platform/windows/cpu_monitor_translate_tests.cpp
+    platform/windows/cpu_monitor_integration_tests.cpp
 )
 target_compile_features(srm_tests PRIVATE cxx_std_20)
 target_include_directories(srm_tests PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})

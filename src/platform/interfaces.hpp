@@ -36,4 +36,16 @@ public:
     virtual core::Result<std::vector<core::DiskVolumeInfo>> sample() = 0;
 };
 
+// CPU utilization is interval-based: it isn't meaningful from a single
+// cumulative tick reading. Each backend takes its first reading at
+// construction time, so sample() is meaningful starting with its very
+// first call -- callers never need a separate throwaway warm-up call --
+// though that first percentage necessarily reflects however little time
+// has elapsed since construction rather than a full refresh interval.
+class ICpuMonitor {
+public:
+    virtual ~ICpuMonitor() = default;
+    virtual core::Result<core::CpuSnapshot> sample() = 0;
+};
+
 } // namespace srm::platform

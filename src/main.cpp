@@ -1,6 +1,10 @@
 #include <iostream>
 
+#include <chrono>
+#include <thread>
+
 #include "core/format.hpp"
+#include "platform/windows/cpu_monitor.hpp"
 #include "platform/windows/disk_monitor.hpp"
 #include "platform/windows/memory_monitor.hpp"
 
@@ -8,6 +12,16 @@
 // end-to-end smoke check. Replaced by real CLI parsing, the monitor engine,
 // and the presentation layer in later milestones.
 int main() {
+    srm::platform::windows::CpuMonitor cpu_monitor; // takes its baseline reading now
+    std::this_thread::sleep_for(std::chrono::milliseconds(200));
+    const auto cpu_result = cpu_monitor.sample();
+    if (cpu_result) {
+        std::cout << "CPU utilization: "
+                  << srm::core::format::percent(cpu_result.value().total_utilization_percent) << "\n";
+    } else {
+        std::cout << "CPU metrics unavailable: " << cpu_result.error().message << "\n";
+    }
+
     srm::platform::windows::MemoryMonitor memory_monitor;
     const auto mem_result = memory_monitor.sample();
     if (mem_result) {

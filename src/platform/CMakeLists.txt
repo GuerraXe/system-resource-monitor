@@ -8,6 +8,7 @@ if (WIN32)
         windows/win_string.cpp
         windows/memory_monitor.cpp
         windows/disk_monitor.cpp
+        windows/cpu_monitor.cpp
     )
 else()
     # No sources added: fail the configure step loudly instead of silently
