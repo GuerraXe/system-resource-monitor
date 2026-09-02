@@ -32,8 +32,6 @@ struct RawMemoryStatus {
     std::uint32_t last_error = 0;
     std::uint64_t total_physical_bytes = 0;
     std::uint64_t available_physical_bytes = 0;
-    std::uint64_t total_page_file_bytes = 0;
-    std::uint64_t available_page_file_bytes = 0;
 };
 
 core::Result<core::MemoryInfo> translate(const RawMemoryStatus& raw);

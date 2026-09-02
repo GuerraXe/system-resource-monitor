@@ -183,7 +183,7 @@ Concretely, each interface maps to:
 | Interface | Windows source | Linux equivalent |
 |---|---|---|
 | `ICpuMonitor` | `GetSystemTimes` | `/proc/stat`'s `cpu` line: `idle+iowait` vs. the sum of all fields. Same `core::math::cpu_percent_from_ticks` call, unchanged. |
-| `IMemoryMonitor` | `GlobalMemoryStatusEx` | `/proc/meminfo`: `MemTotal`, `MemAvailable`, `SwapTotal`, `SwapFree`. |
+| `IMemoryMonitor` | `GlobalMemoryStatusEx` | `/proc/meminfo`: `MemTotal`, `MemAvailable`. |
 | `IDiskMonitor` | `GetLogicalDrives` + `GetDiskFreeSpaceExW` | Mount points from `/proc/mounts` (or `getmntent`), sizes from `statvfs()` per mount point. |
 | `IProcessMonitor` | Toolhelp32 + `GetProcessTimes`/`GetProcessMemoryInfo` | Enumerate `/proc/[pid]/`, read `utime`+`stime` (fields 14/15) from `/proc/[pid]/stat` for CPU ticks, `VmRSS` from `/proc/[pid]/status` for memory. `core::math::cpu_percent_of_wall_time`'s `ticks_per_second` becomes `sysconf(_SC_CLK_TCK)` (typically 100) instead of FILETIME's fixed 10,000,000. |
 | `INetworkMonitor` | `GetIfTable2` | `/proc/net/dev`'s per-interface `rx_bytes`/`tx_bytes` columns; filter `lo` instead of `IF_TYPE_SOFTWARE_LOOPBACK`, and there's no NDIS-filter-interface equivalent to exclude. Same `core::math::rate_per_second` call, unchanged. |
@@ -196,6 +196,9 @@ in the right place.
 ## Known limitations
 
 - Per-core CPU utilization is not implemented (see above).
+- Only physical RAM is reported. Page-file / commit-charge figures are
+  available from the same `GlobalMemoryStatusEx` call but aren't collected
+  or shown, since the report has no line for them.
 - Process CPU/memory fields don't distinguish "genuinely zero" from
   "couldn't be measured" (see above).
 - ANSI screen-clear escape codes degrade to visible garbage text on a

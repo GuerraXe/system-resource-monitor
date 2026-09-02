@@ -13,5 +13,4 @@ TEST_CASE("memory monitor integration: real sample reports sane invariants") {
     const auto& mem = result.value();
     CHECK(mem.total_physical_bytes > 0);
     CHECK(mem.available_physical_bytes <= mem.total_physical_bytes);
-    CHECK(mem.available_page_file_bytes <= mem.total_page_file_bytes);
 }

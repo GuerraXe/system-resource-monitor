@@ -19,8 +19,6 @@ core::Result<core::MemoryInfo> translate(const RawMemoryStatus& raw) {
     core::MemoryInfo info;
     info.total_physical_bytes = raw.total_physical_bytes;
     info.available_physical_bytes = raw.available_physical_bytes;
-    info.total_page_file_bytes = raw.total_page_file_bytes;
-    info.available_page_file_bytes = raw.available_page_file_bytes;
     return core::Result<core::MemoryInfo>::Ok(info);
 }
 
@@ -33,8 +31,6 @@ core::Result<core::MemoryInfo> MemoryMonitor::sample() {
         raw.succeeded = true;
         raw.total_physical_bytes = status.ullTotalPhys;
         raw.available_physical_bytes = status.ullAvailPhys;
-        raw.total_page_file_bytes = status.ullTotalPageFile;
-        raw.available_page_file_bytes = status.ullAvailPageFile;
     } else {
         raw.succeeded = false;
         raw.last_error = static_cast<std::uint32_t>(GetLastError());

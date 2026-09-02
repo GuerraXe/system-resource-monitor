@@ -71,7 +71,12 @@ void enable_ansi_escape_codes() {
     SetConsoleMode(out, mode | ENABLE_VIRTUAL_TERMINAL_PROCESSING);
 }
 
-void clear_screen() { std::cout << "\x1b[2J\x1b[H"; }
+// Repaint without the flash a full-screen erase causes: park the cursor at
+// the top-left and overwrite the previous frame in place, then erase only
+// whatever the last (longer) frame left below the new one. "\x1b[H" homes
+// the cursor; "\x1b[0J" clears from the cursor to the end of the screen.
+void cursor_home() { std::cout << "\x1b[H"; }
+void clear_below_cursor() { std::cout << "\x1b[0J"; }
 
 srm::monitor::MonitorEngine make_engine() {
     using namespace srm::platform::windows;
@@ -110,8 +115,9 @@ int main(int argc, char** argv) {
     SetConsoleCtrlHandler(console_ctrl_handler, TRUE);
 
     while (!g_shutdown_requested.load()) {
-        clear_screen();
+        cursor_home();
         std::cout << srm::presentation::render(engine.poll(), config);
+        clear_below_cursor();
         std::cout.flush();
         interruptible_sleep(config.interval);
     }

@@ -2,6 +2,8 @@
 
 #include <algorithm>
 #include <sstream>
+#include <string>
+#include <vector>
 
 #include "core/format.hpp"
 #include "core/math.hpp"
@@ -98,10 +100,43 @@ void render_processes(std::ostringstream& out, const monitor::SystemSnapshot& sn
     out << "Processes (" << processes.size() << " total, top " << config.top_n << " by " << sort_label << "):\n";
 
     const std::size_t shown = std::min(config.top_n, processes.size());
+
+    // Pre-format each column, then pad to a common width so the rows line
+    // up regardless of how wide any individual pid / name / percentage is.
+    std::vector<std::string> pid_cells, name_cells, cpu_cells, mem_cells;
+    pid_cells.reserve(shown);
+    name_cells.reserve(shown);
+    cpu_cells.reserve(shown);
+    mem_cells.reserve(shown);
     for (std::size_t i = 0; i < shown; ++i) {
         const auto& p = processes[i];
-        out << "  " << p.pid << "  " << p.name << "  " << core::format::percent(p.cpu_percent) << "  "
-            << core::format::bytes(p.working_set_bytes) << "\n";
+        pid_cells.push_back(std::to_string(p.pid));
+        name_cells.push_back(p.name);
+        cpu_cells.push_back(core::format::percent(p.cpu_percent));
+        mem_cells.push_back(core::format::bytes(p.working_set_bytes));
+    }
+
+    const auto max_width = [](const std::vector<std::string>& cells) {
+        std::size_t width = 0;
+        for (const auto& cell : cells) {
+            width = std::max(width, cell.size());
+        }
+        return width;
+    };
+    const std::size_t pid_width = max_width(pid_cells);
+    const std::size_t name_width = max_width(name_cells);
+    const std::size_t cpu_width = max_width(cpu_cells);
+
+    const auto pad_left = [](const std::string& s, std::size_t width) {
+        return s.size() >= width ? s : std::string(width - s.size(), ' ') + s;
+    };
+    const auto pad_right = [](const std::string& s, std::size_t width) {
+        return s.size() >= width ? s : s + std::string(width - s.size(), ' ');
+    };
+
+    for (std::size_t i = 0; i < shown; ++i) {
+        out << "  " << pad_left(pid_cells[i], pid_width) << "  " << pad_right(name_cells[i], name_width) << "  "
+            << pad_left(cpu_cells[i], cpu_width) << "  " << mem_cells[i] << "\n";
     }
 }
 

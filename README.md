@@ -112,12 +112,13 @@ Disks:
 Network:
   Wi-Fi  down 13.8 KB/s  up 19.0 KB/s
 Processes (320 total, top 3 by CPU):
-  3652  chrome.exe  14.0%  597.9 MB
-  13772  chrome.exe  7.0%  588.2 MB
-  27568  model_host.exe  0.0%  415.1 MB
+   3652  chrome.exe      14.0%  597.9 MB
+  13772  chrome.exe       7.0%  588.2 MB
+  27568  model_host.exe   0.0%  415.1 MB
 ```
 
-Rows are space-separated, not column-aligned.
+The process columns are padded to line up; their widths follow whatever's
+actually in the list on a given run.
 
 ### Command-line options
 

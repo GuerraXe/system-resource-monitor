@@ -15,8 +15,6 @@ TEST_CASE("memory translate: success maps every field through unchanged") {
     raw.succeeded = true;
     raw.total_physical_bytes = 16ull * 1024 * 1024 * 1024;
     raw.available_physical_bytes = 4ull * 1024 * 1024 * 1024;
-    raw.total_page_file_bytes = 20ull * 1024 * 1024 * 1024;
-    raw.available_page_file_bytes = 6ull * 1024 * 1024 * 1024;
 
     auto result = translate(raw);
 
@@ -24,8 +22,6 @@ TEST_CASE("memory translate: success maps every field through unchanged") {
     const auto& mem = result.value();
     CHECK_EQ(mem.total_physical_bytes, raw.total_physical_bytes);
     CHECK_EQ(mem.available_physical_bytes, raw.available_physical_bytes);
-    CHECK_EQ(mem.total_page_file_bytes, raw.total_page_file_bytes);
-    CHECK_EQ(mem.available_page_file_bytes, raw.available_page_file_bytes);
 }
 
 TEST_CASE("memory translate: failure produces a PlatformApiFailure with the error code in the message") {

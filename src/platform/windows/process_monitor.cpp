@@ -56,7 +56,17 @@ std::vector<core::ProcessInfo> translate(const std::vector<RawProcessSample>& ra
 ProcessMonitor::ProcessMonitor() : previous_sample_time_(std::chrono::steady_clock::now()) {}
 
 core::Result<std::vector<core::ProcessInfo>> ProcessMonitor::sample() {
-    const HANDLE snapshot = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
+    // CreateToolhelp32Snapshot can transiently fail with ERROR_BAD_LENGTH
+    // when the process table changes size mid-call (documented Win32 quirk);
+    // MSDN's own guidance is to retry. A handful of attempts clears it in
+    // practice without turning a hiccup into a blank Processes section.
+    HANDLE snapshot = INVALID_HANDLE_VALUE;
+    for (int attempt = 0; attempt < 4; ++attempt) {
+        snapshot = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
+        if (snapshot != INVALID_HANDLE_VALUE || GetLastError() != ERROR_BAD_LENGTH) {
+            break;
+        }
+    }
     if (snapshot == INVALID_HANDLE_VALUE) {
         return core::Result<std::vector<core::ProcessInfo>>::Fail(core::Error{
             core::ErrorCode::PlatformApiFailure,
