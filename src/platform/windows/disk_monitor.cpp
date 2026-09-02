@@ -37,6 +37,18 @@ core::Result<std::vector<core::DiskVolumeInfo>> DiskMonitor::sample() {
         });
     }
 
+    // Querying a removable drive that has no media loaded (an empty optical
+    // drive, an empty card-reader slot) otherwise triggers the Windows
+    // hard-error handler: a modal "There is no disk in the drive. Please
+    // insert a disk into drive X:" dialog that blocks GetDiskFreeSpaceExW /
+    // GetVolumeInformationW until a human dismisses it -- which stalls the
+    // whole refresh loop on an unattended machine. SEM_FAILCRITICALERRORS
+    // makes those calls fail quietly instead; translate() already drops any
+    // volume whose space query failed, which is exactly the "unqueryable
+    // media is omitted" behaviour ARCHITECTURE.md describes.
+    DWORD previous_error_mode = 0;
+    const bool error_mode_set = SetThreadErrorMode(SEM_FAILCRITICALERRORS, &previous_error_mode);
+
     std::vector<RawVolumeQuery> raw;
     for (int letter = 0; letter < 26; ++letter) {
         if ((drive_mask & (1u << letter)) == 0) {
@@ -64,6 +76,10 @@ core::Result<std::vector<core::DiskVolumeInfo>> DiskMonitor::sample() {
         }
 
         raw.push_back(std::move(q));
+    }
+
+    if (error_mode_set) {
+        SetThreadErrorMode(previous_error_mode, nullptr);
     }
 
     return core::Result<std::vector<core::DiskVolumeInfo>>::Ok(translate(raw));

@@ -99,8 +99,10 @@ lives in `core::math::cpu_percent_of_wall_time`, parameterized on
 `ticks_per_second` specifically so a Linux backend (jiffies at
 `sysconf(_SC_CLK_TCK)`, not FILETIME's fixed 100ns) can reuse it unchanged.
 
-A process that can't be opened even at `PROCESS_QUERY_LIMITED_INFORMATION`
-(protected/system processes such as `Secure System`, `Registry`) still
+A process that can't be opened even at
+`PROCESS_QUERY_LIMITED_INFORMATION | PROCESS_VM_READ` (the access mask
+`GetProcessMemoryInfo` requires; protected/system processes such as
+`Secure System`, `Registry` deny it) still
 appears in the list with its pid and name -- Toolhelp32 doesn't need a
 handle for that -- just with `cpu_percent` and `working_set_bytes` left at
 0, the same value a genuinely idle, memory-light process would show. This

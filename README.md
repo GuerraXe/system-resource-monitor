@@ -112,18 +112,20 @@ Disks:
 Network:
   Wi-Fi  down 13.8 KB/s  up 19.0 KB/s
 Processes (320 total, top 3 by CPU):
-  3652   chrome.exe       14.0%   597.9 MB
-  13772  chrome.exe        7.0%   588.2 MB
-  27568  model_host.exe    0.0%   415.1 MB
+  3652  chrome.exe  14.0%  597.9 MB
+  13772  chrome.exe  7.0%  588.2 MB
+  27568  model_host.exe  0.0%  415.1 MB
 ```
+
+Rows are space-separated, not column-aligned.
 
 ### Command-line options
 
 | Flag | Default | Description |
 |---|---|---|
-| `--interval <ms>` | `1000` | Refresh interval in milliseconds (clamped to 100–3,600,000) |
+| `--interval <ms>` | `1000` | Refresh interval in milliseconds; rejected with an error if outside 100–3,600,000 |
 | `--once` | off | Print a single snapshot and exit |
-| `--top <n>` | `5` | Number of processes to display (clamped to 1–500) |
+| `--top <n>` | `5` | Number of processes to display; rejected with an error if outside 1–500 |
 | `--sort <cpu\|memory>` | `cpu` | Process list sort key |
 | `-h`, `--help` | | Show usage |
 
